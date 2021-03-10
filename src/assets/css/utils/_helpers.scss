@@ -1,0 +1,158 @@
+// Margin
+@each $key, $value in $spacer {
+  .m-#{$key} {
+    margin: $value !important;
+  }
+  .mt-#{$key} {
+    margin-top: $value !important;
+  }
+  .mr-#{$key} {
+    margin-right: $value !important;
+  }
+  .mb-#{$key} {
+    margin-bottom: $value !important;
+  }
+  .ml-#{$key} {
+    margin-left: $value !important;
+  }
+}
+
+.m-auto {
+  margin: auto;
+}
+
+// Padding
+@each $key, $value in $spacer {
+  .p-#{$key} {
+    padding: $value !important;
+  }
+  .pt-#{$key} {
+    padding-top: $value !important;
+  }
+  .pr-#{$key} {
+    padding-right: $value !important;
+  }
+  .pb-#{$key} {
+    padding-bottom: $value !important;
+  }
+  .pl-#{$key} {
+    padding-left: $value !important;
+  }
+}
+
+// Width: %
+@for $i from 1 through 10 {
+  .w-#{$i* 10} {
+    width: $i * 10%;
+  }
+}
+
+.bd {
+  border: 1px solid #000;
+  // direction
+  &-left {
+    border-left: 1px solid #000;
+  }
+  &-right {
+    border-right: 1px solid #000;
+  }
+  &-top {
+    border-top: 1px solid #000;
+  }
+  &-bottom {
+    border-bottom: 1px solid #000;
+  }
+  // width
+  &-bold {
+    border-width: 8px !important;
+  }
+  // style
+  &-round {
+    border-radius: 8px !important;
+  }
+  &-circle {
+    border-radius: 15px !important;
+  }
+}
+
+// Color
+@each $key, $value in $themes {
+  .#{$key} {
+    color: $value !important;
+  }
+  .bg-#{$key} {
+    background-color: $value !important;
+  }
+  .bd-#{$key} {
+    border-color: $value !important;
+  }
+}
+
+.fx {
+  display: flex;
+  &-wrap {
+    flex-wrap: wrap;
+  }
+  &-jcc {
+    justify-content: center;
+  }
+  &-jed {
+    justify-content: flex-end;
+  }
+  &-jsb {
+    justify-content: space-between;
+  }
+  &-aic {
+    align-items: center;
+  }
+  &-aie {
+    align-items: flex-end;
+  }
+  &-acc {
+    align-content: center;
+  }
+  &-asc {
+    align-self: center;
+  }
+}
+
+.font {
+  // size
+  &-sm {
+    font-size: 0.7rem;
+  }
+  &-md {
+    font-size: 1.5rem;
+  }
+  &-lg {
+    font-size: 2rem;
+  }
+  // weight
+  &-bold{
+    font-weight: bold;
+  }
+  // style
+  &-italic {
+    font-style: italic;
+  }
+}
+
+// Align
+.left {
+  text-align: left;
+}
+.center {
+  text-align: center;
+}
+
+.divider {
+  margin-top: 10px;
+  margin-bottom: 13px;
+  border-width:0;
+  height: 1px;
+  background-color: #747373;
+}
+
+.pointer {
+  cursor: pointer;
+}

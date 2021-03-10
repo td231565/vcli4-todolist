@@ -1,0 +1,24 @@
+.btn {
+  padding: 6px 10px;
+  background-color: #fcfcfc;
+  border: 1px solid $gray;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all ease 0.4s;
+  &:hover {
+    color: $white;
+    background-color: $primary;
+    border-color: $primary;
+  }
+}
+
+@each $key, $value in $themes {
+  .btn-#{$key} {
+    color: $value;
+    border-color: $value;
+    &:hover {
+      background-color: rgba($value, 0.7);
+      border-color: $value;
+    }
+  }
+}

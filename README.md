@@ -1,4 +1,4 @@
-# vue-cli-4
+# todo-list
 
 ## Project setup
 ```

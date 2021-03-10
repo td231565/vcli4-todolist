@@ -1,0 +1,30 @@
+$primary:               #00918a;
+$secondary:             #ef6c00;
+$gray:                  #c5c8ce;
+$white:                 #ffffff;
+$error:                 #ed4014;
+$warning:               #ff9900;
+$success:               #19be6b;
+$info:                  #2db7f5;
+
+// Color
+$themes:(
+  'primary': $primary,
+  'secondary': $secondary,
+  'gray': $gray,
+  'white': $white,
+  'error': $error,
+  'warning': $warning,
+  'success': $success,
+  'info': $info
+);
+
+// Spacing
+$space: 1rem !default;
+$spacer: (
+  0: 0,
+  1: $space * 0.5,
+  2: $space,
+  3: $space * 1.5,
+  4: $space * 2
+);
