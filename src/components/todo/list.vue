@@ -104,6 +104,17 @@ export default {
       todoState.list.splice(dragState.targetIdx, 0, dragItem)
     }
 
+    const getLocalData = () => {
+      let pureData = localStorage.getItem('todolist')
+      todoState.list = JSON.parse(pureData)
+    }
+    getLocalData()
+    const saveData = () => {
+      const { list } = todoState
+      localStorage.setItem('todolist', JSON.stringify(list))
+    }
+    window.addEventListener('beforeunload', saveData)
+
     // Hooks
     // onMounted(() => {
     //   console.log(`%conMounted`, 'background:#ffd56b;color:#f53b22')
@@ -113,7 +124,9 @@ export default {
     // })
     // onUnmounted(() => {
     //   console.log(`%conUnmounted`, 'background:#f53b22;color:#fff')
+    //   saveData()
     // })
+
     // 最後回傳出去使用
     return {
       todayDate,
