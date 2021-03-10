@@ -15,28 +15,30 @@
   </div>
   <!-- List -->
   <ul class="" @drop="setDragItem" @dragover.prevent @dragenter.prevent>
-    <li v-for="(item, idx) in list" :key="item.id"
-      class="list-item fx fx-jsb fx-aic bd-bottom bd-gray p-1"
-      draggable="true"
-      @dragstart="getDragStartIndex(idx)"
-      @dragover.prevent="getDragoverIndex(idx)">
-      <div>
-        <input type="checkbox" class="mr-1" @change="switchItemChecktodoState(item.id)" />
-        <span v-if="!item.isEdit"
-          class="pointer"
-          :class="{done: item.isDone}"
-          @click="switchEditItemText(item.id, 'on')">{{ item.text }}</span>
-        <input v-else
-          type="text"
-          v-model="item.text"
-          @blur="switchEditItemText(item.id, 'off')"
-          @keyup.enter="switchEditItemText(item.id, 'off')" />
-      </div>
-      <div>
-        <span>{{item.time}}</span>
-        <button class="btn btn-error ml-1" @click="removeItem(item.id)">REMOVE</button>
-      </div>
-    </li>
+    <div v-for="dateList in list" :key="dateList.date">
+      <p v-if="dateList.date !== todayDate"
+        class="gray mt-2 mb-0"
+        >{{dateList.date}} {{getDayNameString(new Date(dateList.date))}}</p>
+      <li v-for="(item, idx) in dateList.content" :key="item.id"
+        class="list-item fx fx-jsb fx-aic bd-bottom bd-gray p-1"
+        draggable="true"
+        @dragstart="getDragStartIndex(idx, dateList)"
+        @dragover.prevent="getDragoverIndex(idx, dateList)">
+        <div>
+          <input type="checkbox" class="mr-1" @change="switchItemChecktodoState(item.id)" :checked="item.isDone" />
+          <span v-if="!item.isEdit"
+            class="pointer"
+            :class="{done: item.isDone}"
+            @click="switchEditItemText(item.id, 'on')">{{item.text}}</span>
+          <input v-else
+            type="text"
+            v-model="item.text"
+            @blur="switchEditItemText(item.id, 'off')"
+            @keyup.enter="switchEditItemText(item.id, 'off')" />
+        </div>
+        <button class="btn btn-error ml-1" @click="removeItem(dateList, idx)">REMOVE</button>
+      </li>
+    </div>
   </ul>
 </template>
 
@@ -47,27 +49,49 @@ import Helper from '@/common/utils/helper.js'
 export default {
   name: 'TodoList',
   setup () {
-    // Declare
     const todayDate = computed(() => Helper.getDateString(new Date()))
-    const todayDay = computed(() => new Intl.DateTimeFormat('en-US', { weekday: 'long'}).format(new Date()))
+    const todayDay = computed(() => getDayNameString(new Date()))
+    const getDayNameString = (date) => {
+      return new Intl.DateTimeFormat('en-US', { weekday: 'long'}).format(date)
+    }
+    // Todo
     const todoState = reactive({
       list: [],
       inputText: '',
       selectedTodoId: 0,
-      currentTodoItem: computed(() => todoState.list.find(item => item.id === todoState.selectedTodoId))
+      currentTodoItem: computed(() => {
+        let target = null
+        for (let datelist of todoState.list) {
+          for (let item of datelist.content) {
+            if (item.id === todoState.selectedTodoId) {
+              target = item
+              break
+            }
+          }
+        }
+        return target
+      })
     })
     const todoStateRefs = toRefs(todoState)
     // ADD
     const addItem = () => {
       const { list, inputText } = todoState
       if (!inputText) { return }
-      todoState.list.unshift({
-        id: list.length + 1,
+      const todaysList = list.find(dateList => dateList.date === Helper.getDateString(new Date()))
+      const newTodo = {
+        id: new Date().valueOf(),
         text: inputText,
-        time: Helper.getDateString(new Date()),
         isDone: false,
         isEdit: false
-      })
+      }
+      if (todaysList) {
+        todaysList.content.unshift(newTodo)
+      } else {
+        todoState.list.unshift({
+          date: Helper.getDateString(new Date()),
+          content: [newTodo]
+        })
+      }
       todoState.inputText = ''
     }
     // SELECT
@@ -85,28 +109,35 @@ export default {
       todoState.currentTodoItem.isEdit = state === 'on'
     }
     // DELETE
-    const removeItem = (id) => {
-      todoState.list = todoState.list.filter(item => item.id !== id)
+    const removeItem = (dateList, idx) => {
+      dateList.content.splice(idx, 1)
     }
     // DRAG
     const dragState = reactive({
       dragIdx: 0,
-      targetIdx: 0
+      dragList: null,
+      targetIdx: 0,
+      targetList: null
     })
-    const getDragStartIndex = (idx) => {
+    const getDragStartIndex = (idx, dateList) => {
       dragState.dragIdx = idx
+      dragState.dragList = dateList
     }
-    const getDragoverIndex = (idx) => {
+    const getDragoverIndex = (idx, dateList) => {
       dragState.targetIdx = idx
+      dragState.targetList = dateList
     }
     const setDragItem = () => {
-      const dragItem = todoState.list.splice(dragState.dragIdx, 1)[0]
-      todoState.list.splice(dragState.targetIdx, 0, dragItem)
+      const {dragIdx, dragList, targetIdx, targetList} = dragState
+      const dragItem = dragList.content.splice(dragIdx, 1)[0]
+      targetList.content.splice(targetIdx + 1, 0, dragItem)
     }
 
     const getLocalData = () => {
       let pureData = localStorage.getItem('todolist')
-      todoState.list = JSON.parse(pureData)
+      if (pureData) {
+        todoState.list = JSON.parse(pureData)
+      }
     }
     getLocalData()
     const saveData = () => {
@@ -131,6 +162,7 @@ export default {
     return {
       todayDate,
       todayDay,
+      getDayNameString,
       ...todoStateRefs,
       addItem,
       switchItemChecktodoState,
